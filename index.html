@@ -313,26 +313,20 @@ const quizData = [
     { q: "महिला घरेलू क्रिकेट में दूसरा सबसे बड़ा व्यक्तिगत स्कोर बनाने वाली अंशिता गुप्ता का संबंध किस राज्य से है?", options: ["झारखंड", "बिहार", "उत्तर प्रदेश", "राजस्थान"], ans: 1 }
 ];
 
-// विकल्पों को शफ़ल करने और सही उत्तर को हमेशा दूसरे (2) स्थान (Index 1) पर फिक्स करने के लिए फ़ंक्शन
+// सही उत्तर समेत सभी विकल्पों को पूरी तरह से शफ़ल (Shuffle) करने का फ़ंक्शन
 function prepareQuizData() {
     quizData.forEach(item => {
+        // सबसे पहले मूल सही उत्तर को सुरक्षित करें
         const correctAnswer = item.options[item.ans];
-        const incorrectAnswers = item.options.filter((_, idx) => idx !== item.ans);
 
-        // गलत 3 विकल्पों को आपस में रैंडम शफ़ल करें
-        for (let i = incorrectAnswers.length - 1; i > 0; i--) {
+        // Fisher-Yates shuffle तकनीक द्वारा सभी 4 विकल्पों को पूरी तरह से रैंडम करें
+        for (let i = item.options.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [incorrectAnswers[i], incorrectAnswers[j]] = [incorrectAnswers[j], incorrectAnswers[i]];
+            [item.options[i], item.options[j]] = [item.options[j], item.options[i]];
         }
 
-        // 2nd नंबर (Index 1) पर सही उत्तर रखें और बाकी जगह गलत विकल्प
-        item.options = [
-            incorrectAnswers[0],
-            correctAnswer,
-            incorrectAnswers[1],
-            incorrectAnswers[2]
-        ];
-        item.ans = 1; // 2nd नंबर विकल्प का इंडेक्स हमेशा 1 होगा
+        // शफ़ल होने के बाद सही उत्तर जिस नए इंडेक्स (0, 1, 2, या 3) पर पहुंचा है, उसे अपडेट करें
+        item.ans = item.options.indexOf(correctAnswer);
     });
 }
 
